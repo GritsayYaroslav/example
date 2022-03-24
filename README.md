@@ -1,5 +1,5 @@
 ## TODO
 
-1. Create TODO lis usong only native js
+1. Create TODO list using only native js
 
 ![Final view](./images/1.png)

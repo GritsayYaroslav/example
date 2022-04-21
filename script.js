@@ -3,46 +3,62 @@ const addBtn = document.querySelector('.js-add-btn');
 const blockTodoElement = document.querySelector('.js-list');
 let listMessages = [];
 
-if(localStorage.getItem('value')) {
-  listMessages = JSON.parse(localStorage.getItem('value'));
-  createItem();
-}
+// 1. encapsulate into one module
+// 2. Click Event manager (use delegation https://javascript.info/event-delegation)
+// 3. Create Storage manager api set/get.
+// 4. Create DOM manager
 
-addBtn.addEventListener('click', function () {
-  let newMessageValue = {
-    value: inputValue.value
-  };
+// const dom = new DOM(); // ~ jquery plugin
+// 1. registerEvents -> subscribe to delegation event
+// 2. create item layout method
+// 3. add item -> trigger render
+// 4. remove item -> trigger render
+// 5. render items
 
-  listMessages.unshift(newMessageValue);
-  createItem()
+(function () {
+    if (localStorage.getItem('value')) {
+        listMessages = JSON.parse(localStorage.getItem('value'));
+        createItem();
+    }
 
-  localStorage.setItem('value', JSON.stringify(listMessages));
-});
+    addBtn.addEventListener('click', function () {
+        let newMessageValue = {
+            value: inputValue.value,
+        };
 
-function createItem() {
-  let showMessage = '';
+        listMessages.unshift(newMessageValue);
+        createItem();
 
-  if(listMessages.length === 0) blockTodoElement.innerHTML = '';
+        localStorage.setItem('value', JSON.stringify(listMessages));
+    });
 
-  listMessages.forEach(function (item, index) {
+    function createItem() {
+        let showMessage = '';
 
-    showMessage += `
-        <li class="message-section__list" id="${index}">
-          <p class="message-section__text">${item.value}</p>
-          <i class="message-section__btn fa fa-trash-o" onclick="removeItem(${index})"></i>
-        </li>
-      `
-    blockTodoElement.innerHTML = showMessage;
-  })
-}
+        if (listMessages.length === 0) {
+            blockTodoElement.innerHTML = '';
+        }
 
-function removeItem(index) {
-  let getItemsStorage = JSON.parse(localStorage.getItem('value'));
+        listMessages.forEach(function (item, index) {
+            showMessage += `
+          <li class="message-section__list" id="${index}">
+            <p class="message-section__text">${item.value}</p>
+            <i class="message-section__btn fa fa-trash-o" onclick="removeItem(${index})"></i>
+          </li>
+        `;
+            blockTodoElement.innerHTML = showMessage;
+        });
+    }
 
-  getItemsStorage.splice(index, 1)
+    function removeItem(index) {
+        let getItemsStorage = JSON.parse(localStorage.getItem('value'));
 
-  listMessages = getItemsStorage
+        getItemsStorage.splice(index, 1);
 
-  localStorage.setItem('value', JSON.stringify(getItemsStorage));
-  createItem();
-}
+        listMessages = getItemsStorage;
+
+        localStorage.setItem('value', JSON.stringify(getItemsStorage));
+
+        createItem();
+    }
+})();
